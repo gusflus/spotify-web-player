@@ -2,7 +2,7 @@ const express = require("express");
 const request = require("request");
 const dotenv = require("dotenv");
 
-const port = 8000;
+const port = 5001;
 
 var access_token = "";
 
@@ -10,6 +10,7 @@ dotenv.config();
 
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+
 var spotify_redirect_uri = "http://localhost:3000/auth/callback";
 
 var generateRandomString = function (length) {
@@ -26,11 +27,7 @@ var generateRandomString = function (length) {
 var app = express();
 
 app.get("/auth/login", (req, res) => {
-  var scope =
-    "streaming \
-               user-read-email \
-               user-read-private";
-
+  var scope = "streaming user-read-email user-read-private";
   var state = generateRandomString(16);
 
   var auth_query_parameters = new URLSearchParams({
@@ -54,7 +51,7 @@ app.get("/auth/callback", (req, res) => {
     url: "https://accounts.spotify.com/api/token",
     form: {
       code: code,
-      redirect_uri: "http://localhost:3000/auth/callback",
+      redirect_uri: spotify_redirect_uri,
       grant_type: "authorization_code",
     },
     headers: {
